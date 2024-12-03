@@ -79,23 +79,25 @@ with ui.sidebar(open="open"):
     )
 
 with ui.layout_columns(col_widths=[4, 4, 4]):
-    with ui.value_box(
-        showcase=icon_svg("sun"),
-        theme="bg-gradient-green-yellow",
-        full_screen=False
-    ):
-        "Current Temperature"
-
-        @render.text
-        def display_temp():
-            deque_snapshot, df, latest_dictionary_entry = reactive_calc_combined()
-            temp_unit = input.temp_unit()
-            if temp_unit == "celsius":
-                return f"{latest_dictionary_entry['temp_celsius']:.1f} °C"
-            else:
-                return f"{latest_dictionary_entry['temp_fahrenheit']:.1f} °F"
-
-        "in Sydney"
+    @render.ui
+    def temp_value_box():
+        deque_snapshot, df, latest_dictionary_entry = reactive_calc_combined()
+        temp_unit = input.temp_unit()
+        
+        if temp_unit == "celsius":
+            theme = "bg-gradient-blue-red"
+            temp_value = f"{latest_dictionary_entry['temp_celsius']:.1f} °C"
+        else:
+            theme = "bg-gradient-green-yellow"
+            temp_value = f"{latest_dictionary_entry['temp_fahrenheit']:.1f} °F"
+        
+        return ui.value_box(
+            showcase=icon_svg("sun"),
+            theme=theme,
+            full_screen=False,
+            value=temp_value,
+            title="Current Temperature in Sydney"
+        )
 
     with ui.card(full_screen=False):
         ui.card_header("Current Date and Time")
@@ -165,4 +167,3 @@ with ui.layout_columns(col_widths=[6, 6]):
             m.add_layer(marker)
             
             return m
-
